@@ -21,7 +21,7 @@ const Subreddits = () => {
   return (
     <Card className="subreddit-card">
       <h2>Subreddits</h2>
-        <ul className="subreddits-list">
+        <ul className="subreddit-list">
           {subreddits.map((subreddit) => (
             <li
             key={subreddit.id}
