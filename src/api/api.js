@@ -2,10 +2,12 @@ import axios from "axios";
 
 const API_ROOT = 'https://www.reddit.com';
 
+axios.defaults.headers.common["User-Agent"] = "MyRedditApp/1.0 (by /u/Go_Blue34)";
+
 // Fetches Top Posts
 export const getSubredditPosts = async (subreddit) => {
     try {
-        const response = await axios.get(`${API_ROOT}/r/${subreddit}/top.json`);
+        const response = await axios.get(`${API_ROOT}${subreddit}.json`);
         return response.data.data.children.map((post) => post.data);
     } catch (error) {
         console.log('Error fetching Subreddit Posts:', error);

@@ -1,8 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { 
     getSubredditPosts,
     getPostComments,
-    getUserProfileImage,
 } from './api';
 
 // Async thunk to fetch posts for the selected subreddit
@@ -26,20 +25,29 @@ export const fetchComments = createAsyncThunk(
     }
 );
 
-// Async thunk to fetch user profile image
-export const fetchUserProfileImage = createAsyncThunk(
-    'reddit/fetchUserProfileImage',
-    async (username) => {
-        const imageUrl = await getUserProfileImage(username);
-        return { username, imageUrl };
-    }
-);
-
 // Async Thunk to set search term
 export const setSearchTerm = createAsyncThunk(
     'reddit/setSearchTerm',
     async (term) => {
         return term;
+    }
+);
+
+export const selectPosts = (state) => state.reddit.posts;
+export const selectSearchTerm = (state) => state.reddit.searchTerm;
+export const selectSelectedSubreddit = (state) =>
+    state.reddit.selectedSubreddit;
+
+export const selectFilteredPosts = createSelector(
+    [selectPosts, selectSearchTerm],
+    (posts, searchTerm) => {
+        if (searchTerm !== '') {
+            return posts.filter((post) => 
+            post.title.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        return posts;
     }
 );
 
@@ -50,14 +58,19 @@ const redditSlice = createSlice({
         posts: [],
         comments: [],
         searchTerm: '',
-        userProfileImages: {},
         status: null,
         error: null,
+        selectedSubreddit: '/r/pics',
     },
     reducers: {
         selectPost: (state, action) => {
             state.selectedPost = action.payload;
         },
+        setSelectedSubreddit: (state, action) => {
+            state.selectedSubreddit = action.payload;
+            state.searchTerm = '';
+        },
+        
     },
     extraReducers: (builder) => {
         builder
@@ -89,18 +102,7 @@ const redditSlice = createSlice({
             state.status = 'failed';
             state.comments = action.error.message;
         })
-        // Handle fetchUserProfileImage lifecycle
-        .addCase(fetchUserProfileImage.pending, (state) => {
-            state.status = 'loading';
-        })
-        .addCase(fetchUserProfileImage.fulfilled, (state, action) => {
-            state.status = 'fulfilled';
-            state.userProfileImages = action.payload;
-        })
-        .addCase(fetchUserProfileImage.rejected, (state, action) => {
-            state.status = 'failed';
-            state.userProfileImages = action.error.message;
-        })
+        // Handle setSearchTerm lifecycle
         .addCase(setSearchTerm.pending, (state) => {
             state.status = 'loading';
         })
@@ -114,7 +116,8 @@ const redditSlice = createSlice({
         })
     }
 });
+
 // Export action creator for selecting a post
-export const { selectPost } = redditSlice.actions;
+export const { selectPost, setSelectedSubreddit } = redditSlice.actions;
 
 export default redditSlice.reducer;
