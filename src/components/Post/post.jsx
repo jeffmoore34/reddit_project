@@ -11,6 +11,8 @@ import {
 import Card from '../Card/card';
 import Comment from '../Comment/comment';
 import shortenNumber from '../../utils/shortenNumber';
+import defaultIcon from '../../assets/social-network.png'
+import './post.css';
 
 const Post = (props) => {
 
@@ -50,14 +52,14 @@ const Post = (props) => {
         <div className="post-wrapper">
           <div className="post-votes-container">
             <button type="button" className="icon-action-button up-vote">
-              Up Vote
+              <TiArrowUpThick />
             </button>
             <p className="post-votes-value">
               Value
             </p>
             <button
               type="button" className='icone-action-button down-vote'>
-              Down Vote
+              <TiArrowDownThick />
             </button>
           </div>
           <div className="post-container">
@@ -71,7 +73,7 @@ const Post = (props) => {
               <span className="author-details">
                 <img
                   className="author-icon"
-                  src={fetchUserProfileImage[post.author] || '/Users/Moores/Reddit_2/src/assets/social-network.png'}
+                  src={fetchUserProfileImage[post.author] || defaultIcon}
                   alt={`${post.author}'s profile`}
                 />
                 <span className="author-username">{post.author}</span>

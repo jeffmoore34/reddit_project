@@ -28,7 +28,7 @@
   }
   
   .post-image-container .post-image {
-    width: 100%;
+    max-width: 100%;
   }
   
   .post-title {
@@ -111,4 +111,10 @@
   
   .showing-comments {
     color: var(--color-branding);
+  }
+
+  .author-icon {
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
   }
